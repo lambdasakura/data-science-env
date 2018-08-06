@@ -1,0 +1,12 @@
+version: '2.4'
+services:
+  ml-workspace:
+    build: ./
+    image: lambdasakura/data-science-env
+    runtime: nvidia
+    ports: 
+        - "8888:8888"
+        - "6006:6006"
+    restart: always
+    volumes:
+        - "/home/sakura/work_dir:/var/user_home"
