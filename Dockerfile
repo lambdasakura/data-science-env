@@ -11,15 +11,14 @@ ENV LANG=ja_JP.UTF-8
 ENV USER_HOME /var/user_home
 VOLUME /var/user_home
 
-# for Node.js
-RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-
 # to use repository at japan 
-RUN sed -i -e "s%http://archive.ubuntu.com/ubuntu/%http://ftp.iij.ad.jp/pub/linux/ubuntu/archive/%g" /etc/apt/sources.list  && \
+RUN sed -i -e "s%http://archive.ubuntu.com/ubuntu/%http://ftp.iij.ad.jp/pub/linux/ubuntu/archive/%g" /etc/apt/sources.list \
     && apt-get update \
     && apt-get upgrade -y \
     # add repository for python
-    && apt-get install --no-install-recommends -y software-properties-common && \
+    && apt-get install --no-install-recommends -y software-properties-common curl \
+    # for Node.js
+    && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && add-apt-repository ppa:jonathonf/python-3.6 \
     && apt-get update && apt-get install --no-install-recommends -y \
            git \
@@ -45,7 +44,6 @@ RUN sed -i -e "s%http://archive.ubuntu.com/ubuntu/%http://ftp.iij.ad.jp/pub/linu
            mecab \
            libmecab-dev \
            mecab-ipadic-utf8 \
-           python-dev \
            python3.6 \
            python3.6-dev \
            pandoc \
@@ -68,7 +66,7 @@ RUN git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git && \
  
 # Install pip
 RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
-    python get-pip.py && \
+    python3.6 get-pip.py && \
     rm get-pip.py
 
 RUN pip --no-cache-dir install \
@@ -133,5 +131,4 @@ USER ${user}
 CMD jupyter lab
 
 ## Install for wp2txt 
-#RUN apt-get install -y ruby ruby2.3-dev
 #RUN sudo gem install wp2txt
