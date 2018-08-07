@@ -9,7 +9,6 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=ja_JP.UTF-8
 
 ENV USER_HOME /var/user_home
-VOLUME /var/user_home
 
 # to use repository at japan 
 RUN sed -i -e "s%http://archive.ubuntu.com/ubuntu/%http://ftp.iij.ad.jp/pub/linux/ubuntu/archive/%g" /etc/apt/sources.list \
@@ -124,8 +123,11 @@ COPY jupyter_notebook_config.py /usr/local/etc/jupyter/
 # add user 
 RUN groupadd -g ${gid} ${group} \
     && useradd -d "$USER_HOME" -u ${uid} -g ${gid} -m -s /bin/bash ${user}
+RUN echo "${user} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN sudo chown $user:$user $USER_HOME
 
-USER ${user}
+VOLUME ${USER_HOME}
+USER $user
 
 # start jupyter notebook
 CMD jupyter lab
